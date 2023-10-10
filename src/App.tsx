@@ -1,9 +1,10 @@
 import React from 'react';
 import './App.css';
+import StarWarsTable from './components/api';
 
 function App() {
   return (
-    <span>Hello, App!</span>
+    <StarWarsTable />
   );
 }
 
