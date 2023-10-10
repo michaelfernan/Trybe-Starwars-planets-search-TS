@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 const StarWarsTable: React.FC = () => {
   const [planets, setPlanets] = useState<any[]>([]);
-  const [filterText, setFilterText] = useState<string>(''); // Estado para o filtro
+  const [filterText, setFilterText] = useState<string>('');
+  const [filterColumn, setFilterColumn] = useState<string>('population'); // Defina o valor inicial corretamente
+  const [filterComparison, setFilterComparison] = useState<string>('maior que'); // Defina o valor inicial corretamente
+  const [filterValue, setFilterValue] = useState<string>('0');
 
   useEffect(() => {
     async function fetchStarWarsPlanets() {
@@ -18,17 +21,32 @@ const StarWarsTable: React.FC = () => {
     fetchStarWarsPlanets();
   }, []);
 
-  // Função para renderizar a tabela com base no filtro
   function renderTable() {
     if (planets.length === 0) {
       return <p>Não há planetas para exibir.</p>;
     }
 
-    // Filtra os planetas com base no filtro de texto
-    const filteredPlanets = planets.filter((planet) => planet.name.toLowerCase().includes(filterText.toLowerCase()));
-
-    // Obtém os cabeçalhos da tabela (exceto "residents")
     const headers = Object.keys(planets[0]).filter((header) => header !== 'residents');
+
+    function filterPlanets() {
+      return planets.filter((planet) => {
+        const numericValue = parseFloat(planet[filterColumn]);
+        const filterNumericValue = parseFloat(filterValue);
+
+        switch (filterComparison) {
+          case 'maior que':
+            return numericValue > filterNumericValue;
+          case 'menor que':
+            return numericValue < filterNumericValue;
+          case 'igual a':
+            return numericValue === filterNumericValue;
+          default:
+            return true;
+        }
+      });
+    }
+
+    const filteredPlanets = filterPlanets();
 
     return (
       <div>
@@ -39,6 +57,39 @@ const StarWarsTable: React.FC = () => {
           value={ filterText }
           onChange={ (e) => setFilterText(e.target.value) }
         />
+        <select
+          data-testid='column-filter'
+          value={ filterColumn }
+          onChange={ (e) => setFilterColumn(e.target.value) }
+        >
+          <option value="population">population</option>
+          <option value="orbital_period">orbital_period</option>
+          <option value="diameter">diameter</option>
+          <option value="rotation_period">rotation_period</option>
+          <option value="surface_water">surface_water</option>
+        </select>
+        <select
+          data-testid="comparison-filter"
+          value={ filterComparison }
+          onChange={ (e) => setFilterComparison(e.target.value) }
+        >
+          <option value="maior que">maior que</option>
+          <option value="menor que">menor que</option>
+          <option value="igual a">igual a</option>
+        </select>
+        
+        <input
+          data-testid="value-filter"
+          type="number"
+          value={ filterValue }
+          onChange={ (e) => setFilterValue(e.target.value) }
+        />
+        <button
+          data-testid="button-filter"
+          onClick={ () => filterPlanets() }
+        >
+          Filtrar
+        </button>
         <table>
           <thead>
             <tr>
