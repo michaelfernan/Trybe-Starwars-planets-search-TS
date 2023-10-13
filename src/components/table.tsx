@@ -1,43 +1,45 @@
 import React from 'react';
+import { usePlanetContext } from './PlanetContext';
 
-interface Planet {
-  name: string;
-  climate: string;
-  terrain: string;
-  population: number;
-  // Adicione outras propriedades dos planetas conforme necessário
-}
+const Table: React.FC = () => {
+  const { planets, filterText, setFilterText } = usePlanetContext();
 
-interface TableProps {
-  data: Planet[];
-}
-
-const Table: React.FC<TableProps> = ({ data }) => {
-  if (data.length === 0) {
+  if (planets.length === 0) {
     return <p>Não há planetas para exibir.</p>;
   }
 
-  const headers = Object.keys(data[0]).filter((header) => header !== 'residents');
+  const filteredPlanets = planets.filter((planet) => planet.name.toLowerCase().includes(filterText.toLowerCase()));
+
+  const headers = Object.keys(filteredPlanets[0]).filter((header) => header !== 'residents');
 
   return (
-    <table>
-      <thead>
-        <tr>
-          {headers.map((header) => (
-            <th key={ header }>{header}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((planet) => (
-          <tr key={ planet.name }>
+    <div>
+      <input
+        data-testid="name-filter"
+        type="text"
+        placeholder="Filtrar por nome"
+        value={ filterText }
+        onChange={ (e) => setFilterText(e.target.value) }
+      />
+      <table>
+        <thead>
+          <tr>
             {headers.map((header) => (
-              <td key={ header }>{planet[header]}</td>
+              <th key={ header }>{header}</th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {filteredPlanets.map((planet) => (
+            <tr key={ planet.name }>
+              {headers.map((header) => (
+                <td key={ header }>{planet[header]}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
