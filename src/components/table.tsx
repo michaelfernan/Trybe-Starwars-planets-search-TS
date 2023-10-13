@@ -1,5 +1,6 @@
 import React from 'react';
 import { usePlanetContext } from './PlanetContext';
+import NumericFilter from './NumericFilter';
 
 interface PlanetData {
   name: string;
@@ -7,7 +8,7 @@ interface PlanetData {
 }
 
 function Table() {
-  const { planets, filterText, setFilterText } = usePlanetContext();
+  const { planets, filterText } = usePlanetContext();
 
   if (planets.length === 0) {
     return <p>Não há planetas para exibir.</p>;
@@ -23,13 +24,7 @@ function Table() {
 
   return (
     <div>
-      <input
-        data-testid="name-filter"
-        type="text"
-        placeholder="Filtrar por nome"
-        value={ filterText }
-        onChange={ (e) => setFilterText(e.target.value) }
-      />
+      <NumericFilter />
       <table>
         <thead>
           <tr>
