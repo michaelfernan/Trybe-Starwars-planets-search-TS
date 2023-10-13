@@ -15,7 +15,11 @@ function Table() {
 
   const headers = Object.keys(planets[0]).filter((header) => header !== 'residents');
 
-  const filteredPlanets = planets.filter((planet: PlanetData) => planet.name.toLowerCase().includes(filterText.toLowerCase()));
+  const filteredPlanets = planets.filter(
+    (planet: PlanetData) => planet.name.toLowerCase().includes(
+      filterText.toLowerCase(),
+    ),
+  );
 
   return (
     <div>
@@ -39,7 +43,9 @@ function Table() {
             <tr key={ planet.name }>
               {headers.map((header) => (
                 <td key={ header }>
-                  {header === 'name' ? planet[header] : planet[header as keyof PlanetData] || ''}
+                  {header === 'name'
+                    ? planet[header]
+                    : planet[header as keyof PlanetData] || ''}
                 </td>
               ))}
             </tr>
