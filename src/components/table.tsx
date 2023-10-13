@@ -1,16 +1,21 @@
 import React from 'react';
 import { usePlanetContext } from './PlanetContext';
 
-const Table: React.FC = () => {
+interface PlanetData {
+  name: string;
+  residents: string[];
+}
+
+function Table() {
   const { planets, filterText, setFilterText } = usePlanetContext();
 
   if (planets.length === 0) {
     return <p>Não há planetas para exibir.</p>;
   }
 
-  const filteredPlanets = planets.filter((planet) => planet.name.toLowerCase().includes(filterText.toLowerCase()));
+  const headers = Object.keys(planets[0]).filter((header) => header !== 'residents');
 
-  const headers = Object.keys(filteredPlanets[0]).filter((header) => header !== 'residents');
+  const filteredPlanets = planets.filter((planet: PlanetData) => planet.name.toLowerCase().includes(filterText.toLowerCase()));
 
   return (
     <div>
@@ -30,10 +35,12 @@ const Table: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredPlanets.map((planet) => (
+          {filteredPlanets.map((planet: PlanetData) => (
             <tr key={ planet.name }>
               {headers.map((header) => (
-                <td key={ header }>{planet[header]}</td>
+                <td key={ header }>
+                  {header === 'name' ? planet[header] : planet[header as keyof PlanetData] || ''}
+                </td>
               ))}
             </tr>
           ))}
@@ -41,6 +48,6 @@ const Table: React.FC = () => {
       </table>
     </div>
   );
-};
+}
 
 export default Table;

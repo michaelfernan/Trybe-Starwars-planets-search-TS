@@ -1,26 +1,27 @@
 import React, { useEffect } from 'react';
-import Table from './Table';
-import { PlanetProvider, usePlanetContext } from './PlanetContext';
+import { usePlanetContext } from './PlanetContext';
 
-const StarWarsTable: React.FC = () => {
+import Table from './table';
+
+async function fetchStarWarsPlanets(setPlanets: (planets: any) => void) {
+  try {
+    const response = await fetch('https://swapi.dev/api/planets/');
+    const data = await response.json();
+    const planetsData = data.results.map((planet: any) => {
+      const { residents, ...rest } = planet;
+      return rest;
+    });
+    setPlanets(planetsData);
+  } catch (error) {
+    console.error('Erro ao buscar dados da API:', error);
+  }
+}
+
+function StarWarsTable() {
   const { setPlanets } = usePlanetContext();
 
   useEffect(() => {
-    async function fetchStarWarsPlanets() {
-      try {
-        const response = await fetch('https://swapi.dev/api/planets/');
-        const data = await response.json();
-        const planetsData = data.results.map((planet: any) => {
-          const { residents, ...rest } = planet;
-          return rest;
-        });
-        setPlanets(planetsData);
-      } catch (error) {
-        console.error('Erro ao buscar dados da API:', error);
-      }
-    }
-
-    fetchStarWarsPlanets();
+    fetchStarWarsPlanets(setPlanets);
   }, [setPlanets]);
 
   return (
@@ -29,14 +30,6 @@ const StarWarsTable: React.FC = () => {
       <Table />
     </div>
   );
-};
+}
 
-const App: React.FC = () => {
-  return (
-    <PlanetProvider>
-      <StarWarsTable />
-    </PlanetProvider>
-  );
-};
-
-export default App;
+export default StarWarsTable;
