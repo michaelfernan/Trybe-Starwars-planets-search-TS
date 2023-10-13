@@ -46,7 +46,16 @@ export function PlanetProvider({ children }: PlanetProviderProps) {
   };
 
   return (
-    <PlanetContext.Provider value={ { planets, setPlanets, filterText, setFilterText, numericFilters, addNumericFilter } }>
+    <PlanetContext.Provider
+      value={
+      { planets,
+        setPlanets,
+        filterText,
+        setFilterText,
+        numericFilters,
+        addNumericFilter }
+}
+    >
       {children}
     </PlanetContext.Provider>
   );
