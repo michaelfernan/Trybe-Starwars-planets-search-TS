@@ -7,11 +7,19 @@ interface Planet {
   population: string;
 }
 
+interface NumericFilter {
+  column: string;
+  comparison: string;
+  value: string;
+}
+
 interface PlanetContextProps {
   planets: Planet[];
   setPlanets: React.Dispatch<React.SetStateAction<Planet[]>>;
   filterText: string;
   setFilterText: React.Dispatch<React.SetStateAction<string>>;
+  numericFilters: NumericFilter[];
+  addNumericFilter: (filter: NumericFilter) => void;
 }
 
 const PlanetContext = createContext<PlanetContextProps | undefined>(undefined);
@@ -31,9 +39,14 @@ interface PlanetProviderProps {
 export function PlanetProvider({ children }: PlanetProviderProps) {
   const [planets, setPlanets] = useState<Planet[]>([]);
   const [filterText, setFilterText] = useState('');
+  const [numericFilters, setNumericFilters] = useState<NumericFilter[]>([]);
+
+  const addNumericFilter = (filter: NumericFilter) => {
+    setNumericFilters((prevFilters) => [...prevFilters, filter]);
+  };
 
   return (
-    <PlanetContext.Provider value={ { planets, setPlanets, filterText, setFilterText } }>
+    <PlanetContext.Provider value={ { planets, setPlanets, filterText, setFilterText, numericFilters, addNumericFilter } }>
       {children}
     </PlanetContext.Provider>
   );
