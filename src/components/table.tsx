@@ -17,9 +17,7 @@ function Table() {
   const headers = Object.keys(planets[0]).filter((header) => header !== 'residents');
 
   const filteredPlanets = planets.filter(
-    (planet: PlanetData) => planet.name.toLowerCase().includes(
-      filterText.toLowerCase(),
-    ),
+    (planet: PlanetData) => planet.name.toLowerCase().includes(filterText.toLowerCase()),
   );
 
   return (
