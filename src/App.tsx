@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
-import StarWarsTable from './components/StarWarsTable';
 import { PlanetProvider } from './components/PlanetContext';
+import StarWarsTable from './components/StarWarsTable';
 
 function App() {
   return (
