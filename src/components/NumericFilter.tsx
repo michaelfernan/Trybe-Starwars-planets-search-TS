@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { usePlanetContext } from './PlanetContext';
 
+interface Planet {
+  [key: string]: string | number | any;
+}
+interface NumericFilterType {
+  column: string;
+  comparison: string;
+  value: string;
+}
+
 const availableColumns = [
   'population',
   'orbital_period',
@@ -17,7 +26,7 @@ function NumericFilter() {
     setFilterText,
     addNumericFilter,
     numericFilters,
-  } = usePlanetContext();
+  } = usePlanetContext() as any;
 
   const [filterColumn, setFilterColumn] = useState<string>('population');
   const [filterComparison, setFilterComparison] = useState<string>('maior que');
@@ -28,12 +37,12 @@ function NumericFilter() {
   const handleSort = () => {
     const sortedPlanets = [...planets];
 
-    sortedPlanets.sort((a, b) => {
-      if (a[sortColumn] === 'unknown') return 1;
-      if (b[sortColumn] === 'unknown') return -1;
+    sortedPlanets.sort((a: Planet, b: Planet) => {
+      if (a[sortColumn as keyof Planet] === 'unknown') return 1;
+      if (b[sortColumn as keyof Planet] === 'unknown') return -1;
 
-      const numA = parseFloat(a[sortColumn]);
-      const numB = parseFloat(b[sortColumn]);
+      const numA = parseFloat(a[sortColumn as keyof Planet].toString());
+      const numB = parseFloat(b[sortColumn as keyof Planet].toString());
 
       return sortDirection === 'ASC' ? numA - numB : numB - numA;
     });
@@ -41,23 +50,18 @@ function NumericFilter() {
     setPlanets(sortedPlanets);
   };
 
-  const handleFilter = () => {
-    const filter = {
-      column: filterColumn,
-      comparison: filterComparison,
-      value: filterValue,
-    };
+  const handleFilter = (filter: NumericFilterType) => {
     addNumericFilter(filter);
 
-    
-    const updatedAvailableColumns = availableColumns.filter((col) => col !== filterColumn);
-    setFilterColumn(updatedAvailableColumns[0]); 
-    setFilterValue('0'); 
+    const updatedAvailableColumns = availableColumns
+      .filter((col) => col !== filterColumn);
+    setFilterColumn(updatedAvailableColumns[0]);
+    setFilterValue('0');
   };
 
   function filterPlanets() {
-    const filteredPlanets = planets.filter((planet) => {
-      const numericValue = parseFloat(planet[filterColumn]);
+    const filteredPlanets = planets.filter((planet: Planet) => {
+      const numericValue = parseFloat(planet[filterColumn as keyof Planet].toString());
       const filterNumericValue = parseFloat(filterValue);
 
       switch (filterComparison) {
@@ -90,7 +94,8 @@ function NumericFilter() {
         onChange={ (e) => setFilterColumn(e.target.value) }
       >
         {availableColumns
-          .filter((col) => !numericFilters.some((filter) => filter.column === col))
+          .filter((col) => !numericFilters
+            .some((filter: { column: string; }) => filter.column === col))
           .map((col) => (
             <option key={ col } value={ col }>
               {col}
@@ -117,7 +122,11 @@ function NumericFilter() {
         data-testid="button-filter"
         onClick={ () => {
           filterPlanets();
-          handleFilter();
+          handleFilter({
+            column: filterColumn,
+            comparison: filterComparison,
+            value: filterValue,
+          });
         } }
       >
         Filtrar

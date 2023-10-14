@@ -30,7 +30,7 @@ function StarWarsTable() {
       <h1>Tabela de Planetas de Star Wars</h1>
       <NumericFilter />
       <Table />
-   
+
     </div>
   );
 }

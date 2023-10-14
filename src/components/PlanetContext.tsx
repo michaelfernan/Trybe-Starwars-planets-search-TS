@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface Planet {
+export interface Planet {
   name: string;
   climate: string;
   terrain: string;
   population: string;
+  residents?: string[]; // tornando residents opcional
 }
 
 interface NumericFilter {
