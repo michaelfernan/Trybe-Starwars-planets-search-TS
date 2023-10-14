@@ -22,7 +22,6 @@ function Table() {
 
   return (
     <div>
-     
       <table>
         <thead>
           <tr>
@@ -35,7 +34,7 @@ function Table() {
           {filteredPlanets.map((planet: PlanetData) => (
             <tr key={ planet.name }>
               {headers.map((header) => (
-                <td key={ header }>
+                <td key={ header } data-testid={ header === 'name' ? 'planet-name' : '' }>
                   {header === 'name'
                     ? planet[header]
                     : planet[header as keyof PlanetData] || ''}

@@ -8,17 +8,39 @@ const availableColumns = [
   'rotation_period',
   'surface_water',
 ];
+
 function NumericFilter() {
-  const { planets,
+  const {
+    planets,
     setPlanets,
     filterText,
     setFilterText,
     addNumericFilter,
-    numericFilters } = usePlanetContext();
+    numericFilters,
+  } = usePlanetContext();
 
   const [filterColumn, setFilterColumn] = useState<string>('population');
   const [filterComparison, setFilterComparison] = useState<string>('maior que');
   const [filterValue, setFilterValue] = useState<string>('0');
+  const [sortColumn, setSortColumn] = useState<string>('population');
+  const [sortDirection, setSortDirection] = useState<string>('ASC');
+
+  const handleSort = () => {
+    const sortedPlanets = [...planets];
+
+    sortedPlanets.sort((a, b) => {
+      if (a[sortColumn] === 'unknown') return 1;
+      if (b[sortColumn] === 'unknown') return -1;
+
+      const numA = parseFloat(a[sortColumn]);
+      const numB = parseFloat(b[sortColumn]);
+
+      return sortDirection === 'ASC' ? numA - numB : numB - numA;
+    });
+
+    setPlanets(sortedPlanets);
+  };
+
   const handleFilter = () => {
     const filter = {
       column: filterColumn,
@@ -27,11 +49,12 @@ function NumericFilter() {
     };
     addNumericFilter(filter);
 
-    // Remove the selected column from available columns
+    
     const updatedAvailableColumns = availableColumns.filter((col) => col !== filterColumn);
-    setFilterColumn(updatedAvailableColumns[0]); // Set the next available column
-    setFilterValue('0'); // Reset value input
+    setFilterColumn(updatedAvailableColumns[0]); 
+    setFilterValue('0'); 
   };
+
   function filterPlanets() {
     const filteredPlanets = planets.filter((planet) => {
       const numericValue = parseFloat(planet[filterColumn]);
@@ -100,6 +123,43 @@ function NumericFilter() {
         Filtrar
       </button>
 
+      <select
+        data-testid="column-sort"
+        value={ sortColumn }
+        onChange={ (e) => setSortColumn(e.target.value) }
+      >
+        {availableColumns.map((col) => (
+          <option key={ col } value={ col }>
+            {col}
+          </option>
+        ))}
+      </select>
+
+      <label>
+        <input
+          type="radio"
+          data-testid="column-sort-input-asc"
+          value="ASC"
+          checked={ sortDirection === 'ASC' }
+          onChange={ (e) => setSortDirection(e.target.value) }
+        />
+        Ascendente
+      </label>
+
+      <label>
+        <input
+          type="radio"
+          data-testid="column-sort-input-desc"
+          value="DESC"
+          checked={ sortDirection === 'DESC' }
+          onChange={ (e) => setSortDirection(e.target.value) }
+        />
+        Descendente
+      </label>
+
+      <button data-testid="column-sort-button" onClick={ handleSort }>
+        Ordenar
+      </button>
     </div>
   );
 }
