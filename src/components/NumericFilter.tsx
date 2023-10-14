@@ -1,13 +1,37 @@
 import React, { useState } from 'react';
 import { usePlanetContext } from './PlanetContext';
 
+const availableColumns = [
+  'population',
+  'orbital_period',
+  'diameter',
+  'rotation_period',
+  'surface_water',
+];
 function NumericFilter() {
-  const { planets, setPlanets, filterText, setFilterText } = usePlanetContext();
+  const { planets,
+    setPlanets,
+    filterText,
+    setFilterText,
+    addNumericFilter,
+    numericFilters } = usePlanetContext();
 
   const [filterColumn, setFilterColumn] = useState<string>('population');
   const [filterComparison, setFilterComparison] = useState<string>('maior que');
   const [filterValue, setFilterValue] = useState<string>('0');
+  const handleFilter = () => {
+    const filter = {
+      column: filterColumn,
+      comparison: filterComparison,
+      value: filterValue,
+    };
+    addNumericFilter(filter);
 
+    // Remove the selected column from available columns
+    const updatedAvailableColumns = availableColumns.filter((col) => col !== filterColumn);
+    setFilterColumn(updatedAvailableColumns[0]); // Set the next available column
+    setFilterValue('0'); // Reset value input
+  };
   function filterPlanets() {
     const filteredPlanets = planets.filter((planet) => {
       const numericValue = parseFloat(planet[filterColumn]);
@@ -42,11 +66,13 @@ function NumericFilter() {
         value={ filterColumn }
         onChange={ (e) => setFilterColumn(e.target.value) }
       >
-        <option value="population">population</option>
-        <option value="orbital_period">orbital_period</option>
-        <option value="diameter">diameter</option>
-        <option value="rotation_period">rotation_period</option>
-        <option value="surface_water">surface_water</option>
+        {availableColumns
+          .filter((col) => !numericFilters.some((filter) => filter.column === col))
+          .map((col) => (
+            <option key={ col } value={ col }>
+              {col}
+            </option>
+          ))}
       </select>
       <select
         data-testid="comparison-filter"
@@ -66,7 +92,10 @@ function NumericFilter() {
       />
       <button
         data-testid="button-filter"
-        onClick={ () => filterPlanets() }
+        onClick={ () => {
+          filterPlanets();
+          handleFilter();
+        } }
       >
         Filtrar
       </button>

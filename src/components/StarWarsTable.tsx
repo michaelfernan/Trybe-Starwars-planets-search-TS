@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { usePlanetContext } from './PlanetContext';
 
 import Table from './table';
+import NumericFilter from './NumericFilter';
 
 async function fetchStarWarsPlanets(setPlanets: (planets: any) => void) {
   try {
@@ -27,7 +28,9 @@ function StarWarsTable() {
   return (
     <div>
       <h1>Tabela de Planetas de Star Wars</h1>
+      <NumericFilter />
       <Table />
+   
     </div>
   );
 }

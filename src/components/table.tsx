@@ -22,7 +22,7 @@ function Table() {
 
   return (
     <div>
-      <NumericFilter />
+     
       <table>
         <thead>
           <tr>
