@@ -1,12 +1,13 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import App from '../App';
 import { PlanetProvider } from '../components/PlanetContext';
+import StarWarsTable from '../components/StarWarsTable';
 
-test('Renders the table header', () => {
+
+test('renders StarWarsTable component correctly', () => {
   const { getByText } = render(
     <PlanetProvider>
-      <App />
+      <StarWarsTable />
     </PlanetProvider>
   );
 

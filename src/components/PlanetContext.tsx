@@ -5,7 +5,7 @@ export interface Planet {
   climate: string;
   terrain: string;
   population: string;
-  residents?: string[]; // tornando residents opcional
+  residents?: string[];
 }
 
 interface NumericFilter {
