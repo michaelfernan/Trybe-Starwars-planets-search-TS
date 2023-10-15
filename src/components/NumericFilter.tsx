@@ -4,6 +4,7 @@ import { usePlanetContext } from './PlanetContext';
 interface Planet {
   [key: string]: string | number | any;
 }
+
 interface NumericFilterType {
   column: string;
   comparison: string;
@@ -25,7 +26,10 @@ function NumericFilter() {
     filterText,
     setFilterText,
     addNumericFilter,
+    removeNumericFilter,
     numericFilters,
+    removeAllNumericFilters,
+    resetPlanets,
   } = usePlanetContext() as any;
 
   const [filterColumn, setFilterColumn] = useState<string>('population');
@@ -94,8 +98,8 @@ function NumericFilter() {
         onChange={ (e) => setFilterColumn(e.target.value) }
       >
         {availableColumns
-          .filter((col) => !numericFilters
-            .some((filter: { column: string; }) => filter.column === col))
+          .filter((col) => !numericFilters.some((filter: {
+            column: string; }) => filter.column === col))
           .map((col) => (
             <option key={ col } value={ col }>
               {col}
@@ -130,6 +134,33 @@ function NumericFilter() {
         } }
       >
         Filtrar
+      </button>
+
+      {numericFilters.map((filter: NumericFilterType, index: number) => (
+        <div key={ index } data-testid="filter">
+          <span>{filter.column}</span>
+          <span>{filter.comparison}</span>
+          <span>{filter.value}</span>
+          <button
+            data-testid={ `button-remove-filter-${index}` }
+            onClick={ () => {
+              removeNumericFilter(index);
+              resetPlanets();
+            } }
+          >
+            Remover
+          </button>
+        </div>
+      ))}
+
+      <button
+        data-testid="button-remove-filters"
+        onClick={ () => {
+          removeAllNumericFilters();
+          resetPlanets();
+        } }
+      >
+        Remover todas filtragens
       </button>
 
       <select

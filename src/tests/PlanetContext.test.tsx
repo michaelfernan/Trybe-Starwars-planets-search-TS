@@ -17,9 +17,8 @@ describe('PlanetContext', () => {
       </PlanetProvider>
     );
 
-    // Aguarde até que a atualização do estado assíncrono seja concluída
     await act(async () => {
-      // Adicione asserções para verificar se os valores do contexto são fornecidos corretamente
+     
     });
   });
 });
