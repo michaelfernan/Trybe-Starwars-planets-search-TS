@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { usePlanetContext } from './PlanetContext';
 
-import Table from './cr';
+import Table from './Table';
 import NumericFilter from './NumericFilter';
 
 async function fetchStarWarsPlanets(setPlanets: (planets: any) => void) {
