@@ -29,7 +29,7 @@ function NumericFilter() {
     removeNumericFilter,
     numericFilters,
     removeAllNumericFilters,
-    resetPlanets,
+
   } = usePlanetContext() as any;
 
   const [filterColumn, setFilterColumn] = useState<string>('population');
