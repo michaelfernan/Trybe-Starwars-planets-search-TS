@@ -23,7 +23,7 @@ export interface PlanetContextProps {
   addNumericFilter: (filter: NumericFilter) => void;
   removeNumericFilter: (index: number) => void;
   removeAllNumericFilters: () => void;
-  resetPlanets: () => void; // Adicionado aqui
+  resetPlanets: () => void;
 }
 
 const PlanetContext = createContext<PlanetContextProps | undefined>(undefined);
@@ -39,26 +39,46 @@ interface PlanetProviderProps {
   children: ReactNode;
 }
 
-const fetchStarWarsPlanets = async (
-  setOriginalPlanets: React.Dispatch<React.SetStateAction<Planet[]>>,
-) => {
+async function fetchStarWarsPlanets(setPlanets: (planets: any) => void) {
   try {
     const response = await fetch('https://swapi.dev/api/planets/');
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
     const data = await response.json();
-
-    setOriginalPlanets(data.results.map((planet: any) => ({
-      name: planet.name,
-      climate: planet.climate,
-      terrain: planet.terrain,
-      population: planet.population,
-      residents: planet.residents,
-    })));
-  } catch (error:any) {
-    console.error(`Houve um problema com a operação fetch: ${error.message}`);
+    const planetsData = data.results.map((planet: any) => {
+      const { residents, ...rest } = planet;
+      return rest;
+    });
+    setPlanets(planetsData);
+  } catch (error) {
+    console.error('Erro ao buscar dados da API:', error);
   }
+}
+
+const applyFilters = (
+  planets: Planet[],
+  filterText: string,
+  numericFilters: NumericFilter[],
+) => {
+  return planets.filter((planeta) => {
+    // Aplicar o filtro de texto
+    if (!planeta.name.includes(filterText)) return false;
+
+    // Aplicar os filtros numéricos
+    return numericFilters.every((filtro) => {
+      const valorPlaneta = parseFloat(planeta[filtro.column as keyof Planet] as string);
+      const valorFiltro = parseFloat(filtro.value);
+
+      switch (filtro.comparison) {
+        case 'maior que':
+          return valorPlaneta > valorFiltro;
+        case 'menor que':
+          return valorPlaneta < valorFiltro;
+        case 'igual a':
+          return valorPlaneta === valorFiltro;
+        default:
+          return true;
+      }
+    });
+  });
 };
 
 export function PlanetProvider({ children }: PlanetProviderProps) {
@@ -86,6 +106,11 @@ export function PlanetProvider({ children }: PlanetProviderProps) {
   useEffect(() => {
     fetchStarWarsPlanets(setOriginalPlanets);
   }, []);
+
+  useEffect(() => {
+    const planetasFiltrados = applyFilters(originalPlanets, filterText, numericFilters);
+    setPlanets(planetasFiltrados);
+  }, [filterText, numericFilters, originalPlanets]);
 
   const resetPlanets = () => {
     setPlanets([...originalPlanets]);

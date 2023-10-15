@@ -54,34 +54,12 @@ function NumericFilter() {
     setPlanets(sortedPlanets);
   };
 
-  const handleFilter = (filter: NumericFilterType) => {
-    addNumericFilter(filter);
-
-    const updatedAvailableColumns = availableColumns
-      .filter((col) => col !== filterColumn);
-    setFilterColumn(updatedAvailableColumns[0]);
+  const handleFilter = (filtro: NumericFilterType) => {
+    addNumericFilter(filtro);
+    const colunasDisponiveis = availableColumns.filter((col) => col !== filterColumn);
+    setFilterColumn(colunasDisponiveis[0]);
     setFilterValue('0');
   };
-
-  function filterPlanets() {
-    const filteredPlanets = planets.filter((planet: Planet) => {
-      const numericValue = parseFloat(planet[filterColumn as keyof Planet].toString());
-      const filterNumericValue = parseFloat(filterValue);
-
-      switch (filterComparison) {
-        case 'maior que':
-          return numericValue > filterNumericValue;
-        case 'menor que':
-          return numericValue < filterNumericValue;
-        case 'igual a':
-          return numericValue === filterNumericValue;
-        default:
-          return true;
-      }
-    });
-
-    setPlanets(filteredPlanets);
-  }
 
   return (
     <div>
@@ -125,7 +103,6 @@ function NumericFilter() {
       <button
         data-testid="button-filter"
         onClick={ () => {
-          filterPlanets();
           handleFilter({
             column: filterColumn,
             comparison: filterComparison,
@@ -136,17 +113,14 @@ function NumericFilter() {
         Filtrar
       </button>
 
-      {numericFilters.map((filter: NumericFilterType, index: number) => (
+      {numericFilters.map((filtro: NumericFilterType, index: number) => (
         <div key={ index } data-testid="filter">
-          <span>{filter.column}</span>
-          <span>{filter.comparison}</span>
-          <span>{filter.value}</span>
+          <span>{filtro.column}</span>
+          <span>{filtro.comparison}</span>
+          <span>{filtro.value}</span>
           <button
             data-testid={ `button-remove-filter-${index}` }
-            onClick={ () => {
-              removeNumericFilter(index);
-              resetPlanets();
-            } }
+            onClick={ () => removeNumericFilter(index) }
           >
             Remover
           </button>
@@ -155,14 +129,10 @@ function NumericFilter() {
 
       <button
         data-testid="button-remove-filters"
-        onClick={ () => {
-          removeAllNumericFilters();
-          resetPlanets();
-        } }
+        onClick={ removeAllNumericFilters }
       >
-        Remover todas filtragens
+        Remover todos os filtros
       </button>
-
       <select
         data-testid="column-sort"
         value={ sortColumn }
