@@ -97,3 +97,53 @@ test('allows user to remove all numeric filters', () => {
 
  
 });
+
+test('applies a numeric filter and adds it to the list', () => {
+  const { getByTestId, getAllByTestId } = render(
+    <PlanetProvider>
+      <NumericFilter />
+    </PlanetProvider>
+  );
+
+  fireEvent.change(getByTestId('name-filter'), { target: { value: 'Tatooine' } });
+  fireEvent.change(getByTestId('column-filter'), { target: { value: 'diameter' } });
+  fireEvent.change(getByTestId('comparison-filter'), { target: { value: 'menor que' } });
+  fireEvent.change(getByTestId('value-filter'), { target: { value: '1000' } });
+  fireEvent.click(getByTestId('button-filter'));
+
+  const filterItems = getAllByTestId('filter');
+  expect(filterItems.length).toBe(1);
+});
+
+test('allows user to remove an individual numeric filter', () => {
+  const { getByTestId, queryByTestId } = render(
+    <PlanetProvider>
+      <NumericFilter />
+    </PlanetProvider>
+  );
+
+  fireEvent.change(getByTestId('name-filter'), { target: { value: 'Tatooine' } });
+  fireEvent.change(getByTestId('column-filter'), { target: { value: 'diameter' } });
+  fireEvent.change(getByTestId('comparison-filter'), { target: { value: 'menor que' } });
+  fireEvent.change(getByTestId('value-filter'), { target: { value: '1000' } });
+  fireEvent.click(getByTestId('button-filter'));
+
+  fireEvent.click(getByTestId('button-remove-filter-0'));
+  expect(queryByTestId('filter')).not.toBeInTheDocument();
+});
+
+test('allows user to sort columns in ascending or descending order', () => {
+  const { getByTestId } = render(
+    <PlanetProvider>
+      <NumericFilter />
+    </PlanetProvider>
+  );
+
+  fireEvent.change(getByTestId('column-sort'), { target: { value: 'diameter' } });
+  fireEvent.click(getByTestId('column-sort-input-asc'));
+  fireEvent.click(getByTestId('column-sort-button'));
+
+  fireEvent.change(getByTestId('column-sort'), { target: { value: 'diameter' } });
+  fireEvent.click(getByTestId('column-sort-input-desc'));
+  fireEvent.click(getByTestId('column-sort-button'));
+});
