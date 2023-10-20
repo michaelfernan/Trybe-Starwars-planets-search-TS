@@ -1,20 +1,20 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-export interface Planet {
+export type Planet = {
   name: string;
   climate: string;
   terrain: string;
   population: string;
   residents?: string[];
-}
+};
 
-interface NumericFilter {
+export type NumericFilter = {
   column: string;
   comparison: string;
   value: string;
-}
+};
 
-export interface PlanetContextProps {
+export type PlanetContextProps = {
   planets: Planet[];
   setPlanets: React.Dispatch<React.SetStateAction<Planet[]>>;
   filterText: string;
@@ -24,9 +24,9 @@ export interface PlanetContextProps {
   removeNumericFilter: (index: number) => void;
   removeAllNumericFilters: () => void;
   resetPlanets: () => void;
-}
+};
 
-const PlanetContext = createContext<PlanetContextProps | undefined>(undefined);
+export const PlanetContext = createContext<PlanetContextProps | undefined>(undefined);
 export function usePlanetContext() {
   const context = useContext(PlanetContext);
   if (!context) {
@@ -35,9 +35,9 @@ export function usePlanetContext() {
   return context;
 }
 
-interface PlanetProviderProps {
+export type PlanetProviderProps = {
   children: ReactNode;
-}
+};
 
 async function fetchStarWarsPlanets(setPlanets: (planets: any) => void) {
   try {
@@ -59,10 +59,8 @@ const applyFilters = (
   numericFilters: NumericFilter[],
 ) => {
   return planets.filter((planeta) => {
-    // Aplicar o filtro de texto
     if (!planeta.name.includes(filterText)) return false;
 
-    // Aplicar os filtros numéricos
     return numericFilters.every((filtro) => {
       const valorPlaneta = parseFloat(planeta[filtro.column as keyof Planet] as string);
       const valorFiltro = parseFloat(filtro.value);
